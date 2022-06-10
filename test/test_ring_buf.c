@@ -44,7 +44,7 @@ void TEST_onRun(void) {
 
     TEST("RingBuf_num_free");
     {
-        EXPECT(RingBuf_num_free(&rb) == ARRAY_LEN(buf) - 1U);
+        VERIFY(RingBuf_num_free(&rb) == ARRAY_LEN(buf) - 1U);
     }
 
     TEST("RingBuf_put 3");
@@ -52,19 +52,19 @@ void TEST_onRun(void) {
         RingBuf_put(&rb, 0xAAU);
         RingBuf_put(&rb, 0xBBU);
         RingBuf_put(&rb, 0xCCU);
-        EXPECT(RingBuf_num_free(&rb) == ARRAY_LEN(buf) - 1U - 3U);
+        VERIFY(RingBuf_num_free(&rb) == ARRAY_LEN(buf) - 1U - 3U);
     }
 
     TEST("RingBuf_get");
     {
         RingBufElement el;
-        EXPECT(true == RingBuf_get(&rb, &el));
-        EXPECT(0xAAU == el);
-        EXPECT(true == RingBuf_get(&rb, &el));
-        EXPECT(0xBBU == el);
-        EXPECT(true == RingBuf_get(&rb, &el));
-        EXPECT(0xCCU == el);
-        EXPECT(false == RingBuf_get(&rb, &el));
+        VERIFY(true == RingBuf_get(&rb, &el));
+        VERIFY(0xAAU == el);
+        VERIFY(true == RingBuf_get(&rb, &el));
+        VERIFY(0xBBU == el);
+        VERIFY(true == RingBuf_get(&rb, &el));
+        VERIFY(0xCCU == el);
+        VERIFY(false == RingBuf_get(&rb, &el));
     }
 
     TEST("RingBuf_process_all test_data");
@@ -74,12 +74,12 @@ void TEST_onRun(void) {
         }
         test_idx = 0U;
         RingBuf_process_all(&rb, &rb_handler);
-        EXPECT(RingBuf_num_free(&rb) == ARRAY_LEN(buf) - 1U);
+        VERIFY(RingBuf_num_free(&rb) == ARRAY_LEN(buf) - 1U);
     }
 }
 
 static void rb_handler(RingBufElement const el) {
-    EXPECT(test_data[test_idx] == el);
+    VERIFY(test_data[test_idx] == el);
     ++test_idx;
 }
 

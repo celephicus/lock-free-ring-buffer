@@ -21,9 +21,11 @@
 #ifndef SUTEST_H
 #define SUTEST_H
 
-/* macro to check an expectation */
-#define EXPECT(cond_) ((cond_) \
+/* macro to verify a given condition */
+#define VERIFY(cond_) ((cond_) \
         ? (void)0 : TEST_fail_(#cond_, __FILE__, __LINE__))
+
+/* helper macro to calculate length of a 1-dim array */
 #define ARRAY_LEN(a_) (sizeof(a_)/sizeof(a_[0]))
 
 #ifdef __cplusplus

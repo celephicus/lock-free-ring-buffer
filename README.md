@@ -31,7 +31,7 @@ src directory:
 - [ring_buf.c](src/ring_buf.c)  - contains the implementation
 
 The ring buffer holds elements of they type RingBufElement, which
-can be customized (typically `uint8_t`, `uint16_t`, `uint32_t`, `float`, 
+can be customized (typically `uint8_t`, `uint16_t`, `uint32_t`, `float`,
 `void*` (pointers), etc.)
 
 
