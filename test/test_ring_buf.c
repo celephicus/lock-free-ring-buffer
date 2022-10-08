@@ -38,21 +38,24 @@ void setUp(void) {
 void tearDown(void) {
 }
 
+// Maximum available space in ring buffer. 
+#define MAX_FREE (ARRAY_LEN(buf) - 1U)
+
 void TEST_onRun(void) {
 
     RingBuf_ctor(&rb, buf, ARRAY_LEN(buf));
 
     TEST("RingBuf_num_free");
     {
-        VERIFY(RingBuf_num_free(&rb) == ARRAY_LEN(buf) - 1U);
+        VERIFY(RingBuf_num_free(&rb) == MAX_FREE);
     }
 
     TEST("RingBuf_put 3");
     {
-        RingBuf_put(&rb, 0xAAU);
-        RingBuf_put(&rb, 0xBBU);
-        RingBuf_put(&rb, 0xCCU);
-        VERIFY(RingBuf_num_free(&rb) == ARRAY_LEN(buf) - 1U - 3U);
+        VERIFY(true == RingBuf_put(&rb, 0xAAU));
+        VERIFY(true == RingBuf_put(&rb, 0xBBU));
+        VERIFY(true == RingBuf_put(&rb, 0xCCU));
+        VERIFY(RingBuf_num_free(&rb) == MAX_FREE - 3U);
     }
 
     TEST("RingBuf_get");
@@ -67,6 +70,21 @@ void TEST_onRun(void) {
         VERIFY(false == RingBuf_get(&rb, &el));
     }
 
+    TEST("RingBuf_full");
+    {
+        RingBufElement el;
+        for (RingBufCtr i = 0U; i < MAX_FREE; ++i) {
+            VERIFY(true == RingBuf_put(&rb, i));
+        }
+        VERIFY(RingBuf_num_free(&rb) == 0);
+        VERIFY(false == RingBuf_put(&rb, 123));
+        VERIFY(RingBuf_num_free(&rb) == 0);
+        for (RingBufCtr i = 0U; i < MAX_FREE; ++i) {
+            VERIFY(true == RingBuf_get(&rb, &el));
+            VERIFY(i == el);
+        }
+    }
+
     TEST("RingBuf_process_all test_data");
     {
         for (RingBufCtr i = 0U; i < ARRAY_LEN(test_data); ++i) {
@@ -74,7 +92,7 @@ void TEST_onRun(void) {
         }
         test_idx = 0U;
         RingBuf_process_all(&rb, &rb_handler);
-        VERIFY(RingBuf_num_free(&rb) == ARRAY_LEN(buf) - 1U);
+        VERIFY(RingBuf_num_free(&rb) == MAX_FREE);
     }
 }
 
